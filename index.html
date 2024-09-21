@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Splitter Tool</title>
+    <title>Responsive Image Splitter Tool</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,10 +12,13 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            line-height: 1.6;
         }
         #canvas {
             border: 1px solid #ccc;
             margin-bottom: 10px;
+            max-width: 100%;
+            height: auto;
         }
         input[type="file"] {
             margin-bottom: 10px;
@@ -22,14 +26,30 @@
         button {
             margin-top: 10px;
             padding: 5px 10px;
+            cursor: pointer;
+        }
+        .info {
+            max-width: 600px;
+            text-align: justify;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Image Splitter Tool</h1>
+    <h1>Responsive Image Splitter Tool</h1>
+    <div class="info">
+        <p>This tool allows you to combine two images with a diagonal split. It's perfect for comparing different versions of the same design, such as light and dark mode screenshots. Simply upload two images, and they'll be combined on the canvas below. Use the "Swap Images" button to toggle which image appears in which half.</p>
+        <p>Features:</p>
+        <ul>
+            <li>Automatically resizes the canvas to match the first uploaded image</li>
+            <li>Responsive design - the canvas adjusts to fit your screen</li>
+            <li>Real-time image swapping without needing to re-upload</li>
+            <li>Works with various image formats (PNG, JPEG, GIF, etc.)</li>
+        </ul>
+    </div>
     <input type="file" id="image1" accept="image/*">
     <input type="file" id="image2" accept="image/*">
-    <canvas id="canvas" width="800" height="600"></canvas>
+    <canvas id="canvas"></canvas>
     <button id="swapButton">Swap Images</button>
 
     <script>
@@ -42,6 +62,13 @@
         let img1 = new Image();
         let img2 = new Image();
         let isSwapped = false;
+
+        function resizeCanvas(width, height) {
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+        }
 
         function drawImages() {
             const width = canvas.width;
@@ -66,6 +93,7 @@
 
         function handleImageLoad() {
             if (img1.complete && img2.complete) {
+                resizeCanvas(img1.width, img1.height);
                 drawImages();
             }
         }
@@ -85,6 +113,14 @@
         swapButton.addEventListener('click', () => {
             isSwapped = !isSwapped;
             drawImages();
+        });
+
+        // Make the canvas responsive
+        window.addEventListener('resize', () => {
+            if (img1.complete && img2.complete) {
+                resizeCanvas(img1.width, img1.height);
+                drawImages();
+            }
         });
     </script>
 </body>
