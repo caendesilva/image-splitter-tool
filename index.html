@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Splitter Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #canvas {
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Splitter Tool</h1>
+    <input type="file" id="image1" accept="image/*">
+    <input type="file" id="image2" accept="image/*">
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <button id="swapButton">Swap Images</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const image1Input = document.getElementById('image1');
+        const image2Input = document.getElementById('image2');
+        const swapButton = document.getElementById('swapButton');
+
+        let img1 = new Image();
+        let img2 = new Image();
+        let isSwapped = false;
+
+        function drawImages() {
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw the first image
+            ctx.drawImage(isSwapped ? img2 : img1, 0, 0, width, height);
+
+            // Create a clipping path for the second image
+            ctx.beginPath();
+            ctx.moveTo(width, 0);
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.clip();
+
+            // Draw the second image
+            ctx.drawImage(isSwapped ? img1 : img2, 0, 0, width, height);
+        }
+
+        function handleImageLoad() {
+            if (img1.complete && img2.complete) {
+                drawImages();
+            }
+        }
+
+        image1Input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            img1.src = URL.createObjectURL(file);
+            img1.onload = handleImageLoad;
+        });
+
+        image2Input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            img2.src = URL.createObjectURL(file);
+            img2.onload = handleImageLoad;
+        });
+
+        swapButton.addEventListener('click', () => {
+            isSwapped = !isSwapped;
+            drawImages();
+        });
+    </script>
+</body>
+</html>
